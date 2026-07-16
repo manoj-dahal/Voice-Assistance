@@ -1,0 +1,88 @@
+appId: com.era.aera.manoj
+productName: ERA AI
+
+# Build resources live under resources/build so Arena preserves them alongside
+# the rest of the runtime resources.
+directories:
+  buildResources: resources/build
+  output: release
+
+asar: true
+compression: maximum
+
+files:
+  - dist/**/*
+  - src/main/**/*.mjs
+  - src/preload/**/*
+  - package.json
+  - '!**/.vscode/*'
+  - '!**/*.map'
+  - '!**/*.test.{js,jsx,ts,tsx,mjs,cjs}'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.app.json,tsconfig.web.json,credentials.json}'
+  - '!models/**/*'
+  - '!vectordb/**/*'
+  - '!lancedb/**/*'
+  - '!userData/**/*'
+  - '!assets/design/**/*'
+  - '!docs/**/*'
+  - '!scripts/**/*'
+  - '!testing/**/*'
+
+asarUnpack:
+  - resources/**
+
+win:
+  executableName: era-ai
+  icon: resources/build/icon.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  runAfterFinish: true
+
+mac:
+  icon: resources/build/icon.png
+  entitlements: resources/build/entitlements.mac.plist
+  entitlementsInherit: resources/build/entitlements.mac.plist
+  hardenedRuntime: true
+  extendInfo:
+    NSCameraUsageDescription: ERA requests camera access only for user-approved visual sessions.
+    NSMicrophoneUsageDescription: ERA requests microphone access for user-initiated voice conversations.
+    NSDocumentsFolderUsageDescription: ERA requests Documents access only when the user selects files or folders.
+    NSDownloadsFolderUsageDescription: ERA requests Downloads access only when the user selects files or folders.
+  notarize: false
+  target:
+    - dmg
+
+dmg:
+  artifactName: ${name}-${version}.${ext}
+
+linux:
+  icon: resources/build/icon.png
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: Manoj Dahal
+  category: Utility
+
+appImage:
+  artifactName: ${name}-${version}.${ext}
+
+npmRebuild: false
+
+publish:
+  provider: github
+  releaseType: draft
